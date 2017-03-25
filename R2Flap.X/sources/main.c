@@ -71,8 +71,9 @@
 #define SERVO_MIN   2000    // 1000 us
 #define SERVO_REST  3750    // 1500 us
 #define SERVO_MAX   5000    // 2000 us
-#define SERVO_OPEN  4000
-#define SERVO_CLOSE 3500
+#define SERVO_RUN_SPEED     200
+#define SERVO_OPEN  (SERVO_REST + SERVO_RUN_SPEED)
+#define SERVO_CLOSE (SERVO_REST - SERVO_RUN_SPEED)
 /** P R I V A T E  P R O T O T Y P E S ***************************************/
 static void InitializeSystem(void);
 
