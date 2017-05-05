@@ -122,7 +122,7 @@
     #define INPUT_PIN 1
     #define OUTPUT_PIN 0
 
-    #define BAUD_RATE                   115200
+    #define BAUD_RATE                   9600
     #define LENGTH_IN_ASCII
     #define MAX_LENGTH                  9
     #define MAXLENGTH_SOURCE            MAX_LENGTH

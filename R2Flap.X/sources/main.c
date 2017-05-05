@@ -63,6 +63,8 @@
 #include "../includes/usb/usb_config.h"
 #include "../includes/usb/usb_device.h"
 
+#include "../includes/R2Protocol.h"
+
 /** C O M M A N D S ********************************************************/
 #define CMD_OPEN    "O"
 #define CMD_CLOSE   "C"
@@ -131,33 +133,33 @@ int main(void)
 
         OpenTimer1(T1_ON | T1_PS_1_256, 0xFFFF);
         
-        char sourceBuffer[30] = {0};
-        char transactionBuffer[30] = {0};
-        char payloadBuffer[30] = {0};
-        char checksumBuffer[30] = {0};
+        struct R2ProtocolPacket packet;
+        uint8_t packetData[30] = {0};
+        packet.data = packetData;
+        packet.data_len = 30;
         
 		// Application-specific tasks.
 		// Application related code may be added here, or in the ProcessIO() function.
-        int result = ProcessIO(sourceBuffer, payloadBuffer, checksumBuffer, transactionBuffer);
-        /* the buffers now contain relevant information;
-         * they are updated if result == 1; otherwise, it's old info
-         */
+        int result = ProcessIO(&packet);
         
         char readBuffer[100];
         if (result){
             // new data available
             
-//            print out data obtained:
-            /*sprintf(readBuffer,
-                "S: %s\n\rT: %s\n\rP: %s\n\rK: %s\n\r",
-                    sourceBuffer, transactionBuffer,
-                        payloadBuffer, checksumBuffer);
-            putsUSBUSART(readBuffer);*/
-            if (strncmp(payloadBuffer, CMD_OPEN, 5)==0){
-                    setFlapSpeed(SERVO_OPEN);
+            packet.data[packet.data_len] = 0;
+            if (strncmp(packet.data, CMD_OPEN, 5)==0){
+                setFlapSpeed(SERVO_OPEN);
+                putsUSBUSART("[PIC] open!\n\r");
             }
-            else if (strncmp(payloadBuffer, CMD_CLOSE, 5)==0){
-                    setFlapSpeed(SERVO_CLOSE);
+            else if (strncmp(packet.data, CMD_CLOSE, 5)==0){
+                setFlapSpeed(SERVO_CLOSE);
+                putsUSBUSART("[PIC]  close!\n\r");
+            }
+            else{
+                sprintf(readBuffer, "%s, %s, %s\n\r",
+                        packet.source, packet.destination, 
+                        packet.data);
+                putsUSBUSART(readBuffer);
             }
         
         }
